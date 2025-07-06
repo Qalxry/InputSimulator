@@ -16,6 +16,7 @@
 bool quiet = false;
 bool verbose = false;
 double dpiScaling = 1;
+bool consistent = false;  // Flag for consistent coordinates
 
 // Map to store keyboard virtual key codes
 std::map<std::string, WORD> keyCodeMap = {
@@ -222,6 +223,40 @@ BOOL SwitchFocus(DWORD sleepTimeMs) {
     return TRUE;
 }
 
+POINT lastPos = {0, 0};
+
+BOOL GetConsistentCursorPos(LPPOINT pt, BOOL reset = FALSE) {
+    BOOL result = TRUE;
+
+    // Reset last position to current
+    if (reset) result = GetCursorPos(&lastPos);
+
+    if (!consistent) {
+        // If consistent mode is disabled, just get the current cursor position
+        if (reset)
+            *pt = lastPos;
+        else
+            result = result && GetCursorPos(pt);
+    }
+    else {
+        // Consistent mode: always return the last known position unless reset
+        *pt = lastPos;
+    }
+    return result;
+}
+
+BOOL SetConsistentCursorPos(int x, int y) {
+    // If consistent mode is enabled, update the last position
+    if (consistent) {
+        lastPos.x = x;
+        lastPos.y = y;
+    }
+    // Set the cursor position
+    return SetCursorPos(x, y);
+}
+
+
+
 // Set process DPI awareness level
 void setProcessDpiAwareness() {
     // Try to set Per Monitor v2 DPI awareness (Windows 10 1703+)
@@ -305,6 +340,8 @@ void displayHelp() {
     std::cout << "                        this is the time to hold focus [default: 200]\n";
     std::cout << "    -s, --sleep         Sleep time in milliseconds after action [default: 0]\n";
     std::cout << "    -f, --file          Path to a text file containing commands (one per line)\n";
+    std::cout << "    -c, --consistent    Use consistent coordinates, ignoring external mouse movement [default: true]\n";
+    std::cout << "    -q, --quiet         Suppress all output except errors\n";
     std::cout << "    -v, --verbose       Enable verbose output\n";
     std::cout << "    -h, --help          Display this help message and exit\n\n";
     std::cout << "Examples:\n";
@@ -434,6 +471,10 @@ CommandLineArgs parseCommandLine(int argc, char* argv[]) {
                 args.file = argv[++i];
             }
         }
+        else if (arg == "-c" || arg == "--consistent") {
+            // Consistent coordinates flag
+            consistent = true;  // Always true in this implementation
+        }
         else if (arg == "-v" || arg == "--verbose") {
             args.verbose = true;
             verbose = true;
@@ -500,7 +541,7 @@ double calculateEasing(double t, const std::string& mode) {
 // Function to move the mouse cursor smoothly with improved timing
 void smoothMoveMouse(int targetX, int targetY, int duration, const std::string& mode) {
     POINT currentPos;
-    GetCursorPos(&currentPos);
+    GetConsistentCursorPos(&currentPos);
 
     int startX = currentPos.x;
     int startY = currentPos.y;
@@ -543,14 +584,14 @@ void smoothMoveMouse(int targetX, int targetY, int duration, const std::string& 
         int y = startY + static_cast<int>((targetY - startY) * easedT);
 
         // Move the cursor
-        SetCursorPos(x, y);
+        SetConsistentCursorPos(x, y);
 
         // Sleep for next frame, but account for processing time
         std::this_thread::sleep_for(frameTime);
     }
 
     // Ensure we end up exactly at the target position
-    SetCursorPos(targetX, targetY);
+    SetConsistentCursorPos(targetX, targetY);
 }
 
 // Function to simulate a mouse event
@@ -564,7 +605,7 @@ void simulateEvent(const CommandLineArgs& args) {
     }
 
     POINT originalPos;
-    GetCursorPos(&originalPos);
+    GetConsistentCursorPos(&originalPos);
 
     // Handle mouse operations
     if (args.key.substr(0, 6) == "mouse_" || args.key.substr(0, 6) == "wheel_") {
@@ -582,7 +623,7 @@ void simulateEvent(const CommandLineArgs& args) {
         }
         else {
             if (verbose) std::cout << "    Moving mouse: (" << originalPos.x << ", " << originalPos.y << ") -> (" << targetX << ", " << targetY << ")\n";
-            SetCursorPos(targetX, targetY);
+            SetConsistentCursorPos(targetX, targetY);
         }
 
         // Handle mouse button actions
@@ -659,7 +700,7 @@ void simulateEvent(const CommandLineArgs& args) {
             }
             else {
                 if (verbose) std::cout << "    Moving mouse back: (" << targetX << ", " << targetY << ") -> (" << originalPos.x << ", " << originalPos.y << ")\n";
-                SetCursorPos(originalPos.x, originalPos.y);
+                SetConsistentCursorPos(originalPos.x, originalPos.y);
             }
         }
     }
@@ -824,6 +865,8 @@ void execute(const CommandLineArgs& args) {
 int main(int argc, char* argv[]) {
     // Set DPI awareness
     setProcessDpiAwareness();
+
+    GetConsistentCursorPos(&lastPos, TRUE);  // Initialize last position
 
     // Parse command line arguments
     CommandLineArgs args = parseCommandLine(argc, argv);

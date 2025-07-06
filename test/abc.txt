@@ -1,6 +1,8 @@
 -k switch_focus -s 1000
 -k mouse_left -a keydown -x 600 -y 1527 -sm ease -smt 300
+-s 3000
 -k mouse_left -a keyup -x 600 -y 1200 -sm ease -smt 300
+-s 3000
 -k key_ctrl -a keydown
 -k key_c -s 300
 -k key_ctrl -a keyup -s 100

@@ -9,13 +9,13 @@ cmake ..
 cmake --build . --config Release
 
 @REM copy the executable to the parent directory
-if exist ".\Release\MouseClickSimulator.exe" (
-    if exist "..\MouseClickSimulator.exe" (
-        del "..\MouseClickSimulator.exe"
+if exist ".\Release\input_simulator.exe" (
+    if exist "..\input_simulator.exe" (
+        del "..\input_simulator.exe"
     )
-    copy ".\Release\MouseClickSimulator.exe" "..\MouseClickSimulator.exe"
+    copy ".\Release\input_simulator.exe" "..\input_simulator.exe"
 ) else (
-    echo Build failed. MouseClickSimulator.exe not found.
+    echo Build failed. input_simulator.exe not found.
 )
 
 cd ..
