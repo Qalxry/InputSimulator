@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(MouseClickSimulator)
+project(input_simulator)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 20)
@@ -11,20 +11,20 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Add executable as a console application (not using WIN32)
-add_executable(MouseClickSimulator MouseClickSimulator.cpp)
+add_executable(input_simulator main.cpp)
 
 # # 关键修改：声明为WIN32应用程序（不创建控制台窗口）
 # if(WIN32)
-#     add_executable(MouseClickSimulator WIN32 MouseClickSimulator.cpp)
+#     add_executable(input_simulator WIN32 input_simulator.cpp)
 #     if(MSVC)
-#         target_link_options(MouseClickSimulator PRIVATE "/ENTRY:mainCRTStartup")
+#         target_link_options(input_simulator PRIVATE "/ENTRY:mainCRTStartup")
 #     endif()
 # else()
-#     add_executable(MouseClickSimulator MouseClickSimulator.cpp)
+#     add_executable(input_simulator input_simulator.cpp)
 # endif()
 
 # Link Windows libraries
-target_link_libraries(MouseClickSimulator user32)
+target_link_libraries(input_simulator user32)
 
 # Set output directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)

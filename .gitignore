@@ -1,5 +1,6 @@
 .vscode/
-scripts/
-test/
 build/
 build/*
+.old/
+.old/*
+*.exe
