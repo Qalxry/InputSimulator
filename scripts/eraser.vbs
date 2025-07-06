@@ -1,5 +1,5 @@
 dim exePath
-exePath = "E:\Project\SelfProjects\MouseClickSimulator\scripts\MouseClickSimulator.exe"
+exePath = "E:\Project\SelfProjects\InputSimulator\scripts\input_simulator.exe"
 
 set ws = WScript.CreateObject("WScript.Shell")
 

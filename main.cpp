@@ -800,6 +800,7 @@ void processCommandFile(const std::string& filePath) {
     }
 }
 
+// Function to execute the command based on parsed arguments
 void execute(const CommandLineArgs& args) {
     // Display help if requested or if arguments are invalid
     if (args.help) {
