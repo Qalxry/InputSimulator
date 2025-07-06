@@ -11,6 +11,7 @@ A Windows command-line utility for simulating mouse clicks, keyboard presses, an
 - **Focus Management**: Temporary focus switching capability
 - **Batch Processing**: Execute multiple commands from a file
 - **Flexible Modes**: Return cursor to original position after actions
+- **Consistent Coordinates**: Option to ignore external mouse movement during operations, which is useful when using batch processing.
 
 ## Usage
 
@@ -49,6 +50,7 @@ input_simulator.exe -k mouse_right -x 800 -y 600 -m back
 | `-smt, --smooth_time` | Movement duration in milliseconds |
 | `-s, --sleep` | Sleep time after action |
 | `-f, --file` | Execute commands from file |
+| `-c, --consistent` | Ignore external mouse movement |
 | `-v, --verbose` | Verbose output |
 | `-h, --help` | Show help |
 
@@ -59,7 +61,7 @@ Create a text file with commands (one per line):
 ```plaintext
 -k mouse_left -x 100 -y 100
 -k key_enter -a click
--k none -s 1000
+-s 1000
 ```
 
 Execute with: `input_simulator.exe -f commands.txt`
