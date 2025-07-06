@@ -66,13 +66,20 @@ Execute with: `input_simulator.exe -f commands.txt`
 
 ## Build
 
-Requires Windows SDK and C++20 compiler:
-
 ### CMake
 
+To build the Input Simulator, you can use CMake. Follow these steps:
+
 ```bash
-mkdir
+mkdir build
+cd build
+cmake ..
+cmake --build . --config Release
 ```
+
+### Manual Compilation
+
+Ensure you have a C++20 compatible compiler (like g++) and the necessary libraries installed.
 
 ```bash
 g++ -std=c++20 -o input_simulator.exe main.cpp -luser32 -lshcore

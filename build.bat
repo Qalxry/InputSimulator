@@ -8,8 +8,6 @@ cd build
 cmake ..
 cmake --build . --config Release
 
-
-
 @REM copy the executable to the parent directory
 if exist ".\Release\MouseClickSimulator.exe" (
     if exist "..\MouseClickSimulator.exe" (
